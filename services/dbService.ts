@@ -2,14 +2,18 @@
 import { BlogPost, PostStatus, IntegrationSettings, ThemeSettings } from '../types';
 
 const STORAGE_KEYS = {
-    POSTS: 'cms_posts',
-    CONFIG: 'cms_config',
-    THEME: 'cms_theme'
+    POSTS: 'cms_posts_test',
+    CONFIG: 'cms_config_test',
+    THEME: 'cms_theme_test'
 };
 
 const getStorageData = <T>(key: string, fallback: T): T => {
-    const data = localStorage.getItem(key);
-    return data ? JSON.parse(data) : fallback;
+    try {
+        const data = localStorage.getItem(key);
+        return data ? JSON.parse(data) : fallback;
+    } catch (e) {
+        return fallback;
+    }
 };
 
 const setStorageData = (key: string, data: any) => {
@@ -78,7 +82,7 @@ export const dbService = {
       primaryColor: '#6366f1',
       secondaryColor: '#1e3a8a',
       logoUrl: '',
-      siteName: 'AI CMS Local'
+      siteName: 'AI CMS (MODO TESTE)'
     });
   },
 

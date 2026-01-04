@@ -4,15 +4,20 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AI CMS - MODO TESTE</title>
-    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/reactflow@11.10.1/dist/style.min.css" rel="stylesheet">
+    <title>AI CMS - Blog Platform</title>
     
-    <!-- Babel para transformar TSX no navegador (Essencial para modo de teste sem build) -->
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet" />
+    
+    <!-- Babel Standalone -->
     <script src="https://unpkg.com/@babel/standalone@7.23.11/babel.min.js"></script>
 
+    <!-- Import Map Consolidado -->
     <script type="importmap">
 {
   "imports": {
@@ -48,14 +53,22 @@
   }
 }
 </script>
+
     <style>
       body { font-family: 'Inter', sans-serif; margin: 0; padding: 0; }
       #root { min-height: 100vh; }
+      .initial-loader { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background: #f8fafc; }
+      .spinner { width: 40px; height: 40px; border: 4px solid #e2e8f0; border-top: 4px solid #4f46e5; border-radius: 50%; animation: spin 1s linear infinite; }
+      @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
   </head>
   <body class="bg-slate-50 text-slate-900 antialiased">
-    <div id="root"></div>
-    <!-- Alterado para type="text/babel" para que o Babel intercepte e resolva o erro de MIME type -->
+    <div id="root">
+      <div class="initial-loader">
+        <div class="spinner"></div>
+        <p style="margin-top: 1rem; color: #64748b; font-size: 0.875rem; font-weight: 600;">Iniciando Engine IA...</p>
+      </div>
+    </div>
     <script type="text/babel" data-presets="react,typescript" data-type="module" src="/index.tsx"></script>
   </body>
 </html>

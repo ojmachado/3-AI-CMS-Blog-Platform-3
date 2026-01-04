@@ -1,11 +1,13 @@
 
 import { BlogPost, PostStatus, IntegrationSettings, ThemeSettings } from '../types';
 
-// Prefixos específicos para isolar o banco de dados de teste
+// Prefixo único para o modo de teste atual
+const DB_PREFIX = 'v_test_01_';
+
 const STORAGE_KEYS = {
-    POSTS: 'cms_posts_test_v1',
-    CONFIG: 'cms_config_test_v1',
-    THEME: 'cms_theme_test_v1'
+    POSTS: `${DB_PREFIX}posts`,
+    CONFIG: `${DB_PREFIX}config`,
+    THEME: `${DB_PREFIX}theme`
 };
 
 const getStorageData = <T>(key: string, fallback: T): T => {
@@ -83,11 +85,19 @@ export const dbService = {
       primaryColor: '#6366f1',
       secondaryColor: '#1e3a8a',
       logoUrl: '',
-      siteName: 'AI CMS TEST MODE'
+      siteName: 'AI CMS (TEST MODE)'
     });
   },
 
   updateTheme: async (settings: ThemeSettings): Promise<void> => {
     setStorageData(STORAGE_KEYS.THEME, settings);
+  },
+
+  // Função utilitária para limpar tudo se necessário
+  resetDatabase: () => {
+      localStorage.removeItem(STORAGE_KEYS.POSTS);
+      localStorage.removeItem(STORAGE_KEYS.CONFIG);
+      localStorage.removeItem(STORAGE_KEYS.THEME);
+      window.location.reload();
   }
 };

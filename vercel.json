@@ -5,11 +5,11 @@
   "trailingSlash": false,
   "headers": [
     {
-      "source": "/(.*).tsx",
+      "source": "/(.*).(tsx|ts)",
       "headers": [
         {
           "key": "Content-Type",
-          "value": "application/javascript"
+          "value": "application/javascript; charset=utf-8"
         }
       ]
     }

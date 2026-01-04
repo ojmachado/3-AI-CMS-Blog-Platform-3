@@ -11,13 +11,12 @@
     <link href="https://cdn.jsdelivr.net/npm/reactflow@11.10.1/dist/style.min.css" rel="stylesheet">
     
     <!-- Babel para transformar TSX no navegador (Modo de Teste) -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone@7.23.11/babel.min.js"></script>
 
     <script type="importmap">
 {
   "imports": {
     "react": "https://esm.sh/react@18.2.0",
-    "react/": "https://esm.sh/react@18.2.0/",
     "react-dom": "https://esm.sh/react-dom@18.2.0",
     "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
     "react-router-dom": "https://esm.sh/react-router-dom@6.22.3?deps=react@18.2.0,react-dom@18.2.0",
@@ -40,18 +39,21 @@
     "crypto": "https://esm.sh/crypto@^1.0.1",
     "reactflow/": "https://esm.sh/reactflow@^11.11.4/",
     "next": "https://esm.sh/next@^16.1.1",
-    "easymde/": "https://esm.sh/easymde@^2.20.0/"
+    "easymde/": "https://esm.sh/easymde@^2.20.0/",
+    "react/": "https://esm.sh/react@^19.2.3/"
   }
 }
 </script>
     <style>
       body { font-family: 'Inter', sans-serif; margin: 0; padding: 0; }
       #root { min-height: 100vh; }
+      /* Previne flashes brancos durante o carregamento do Babel */
+      [data-cloak] { display: none !important; }
     </style>
   </head>
   <body class="bg-slate-50 text-slate-900 antialiased">
     <div id="root"></div>
-    <!-- Tipo mudado para text/babel para o Babel processar o TSX -->
-    <script type="text/babel" data-type="module" src="/index.tsx"></script>
+    <!-- data-presets="react,typescript" é crucial para o Babel entender o que transformar -->
+    <script type="text/babel" data-presets="react,typescript" data-type="module" src="/index.tsx"></script>
   </body>
 </html>

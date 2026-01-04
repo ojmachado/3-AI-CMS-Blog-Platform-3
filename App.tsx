@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Layout } from './components/Layout.tsx';
@@ -20,7 +19,7 @@ import { LanguageProvider } from './contexts/LanguageContext.tsx';
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, isLoading } = useAuth();
-  if (isLoading) return null;
+  if (isLoading) return <div className="p-20 text-center">Verificando credenciais...</div>;
   if (!user) return <Navigate to="/login" replace />;
   return <>{children}</>;
 };
@@ -36,7 +35,10 @@ const App: React.FC = () => {
                 <Route path="/" element={<HomePage />} />
                 <Route path="/post/:slug" element={<PostPage />} />
                 <Route path="/login" element={<LoginPage />} />
-                {/* Fixed TypeScript error by correctly wrapping components inside ProtectedRoute as children */}
+                {/* 
+                  Fix: Ensure ProtectedRoute correctly wraps the components as children 
+                  to satisfy the React.ReactNode requirement.
+                */}
                 <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
                 <Route path="/admin/create" element={<ProtectedRoute><AdminEditor /></ProtectedRoute>} />
                 <Route path="/admin/edit/:id" element={<ProtectedRoute><AdminEditor /></ProtectedRoute>} />

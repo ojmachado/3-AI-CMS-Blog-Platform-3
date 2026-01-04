@@ -1,10 +1,9 @@
 {
   "version": 2,
   "cleanUrls": true,
-  "trailingSlash": false,
   "headers": [
     {
-      "source": "/(.*).(tsx|ts|js)",
+      "source": "/(.*).(tsx|ts|js|jsx)",
       "headers": [
         {
           "key": "Content-Type",
@@ -15,7 +14,7 @@
   ],
   "rewrites": [
     {
-      "source": "/(.*)",
+      "source": "/((?!.*\\.(?:ts|tsx|js|jsx|css|png|jpg|svg)$).*)",
       "destination": "/index.html"
     }
   ]

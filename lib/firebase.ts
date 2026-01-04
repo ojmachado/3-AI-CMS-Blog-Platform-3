@@ -1,20 +1,27 @@
 
-// Mock Firebase para ambiente de teste estático na Vercel
-export const auth: any = {
-  onAuthStateChanged: (callback: any) => {
-    const user = localStorage.getItem('mock_user');
-    callback(user ? JSON.parse(user) : null);
-    return () => {};
-  },
-  currentUser: null,
-  signInWithEmailAndPassword: async () => ({ user: { email: 'admin@test.com' } }),
-  signOut: async () => { localStorage.removeItem('mock_user'); }
+import { initializeApp, getApps, getApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
+
+// Substitua pelos dados do seu console do Firebase
+const firebaseConfig = {
+  apiKey: "SUA_API_KEY",
+  authDomain: "SEU_PROJETO.firebaseapp.com",
+  projectId: "SEU_PROJETO",
+  storageBucket: "SEU_PROJETO.appspot.com",
+  messagingSenderId: "SEU_SENDER_ID",
+  appId: "SEU_APP_ID"
 };
 
-export const db: any = {};
-export const storage: any = {};
+// Inicialização Singleton
+const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
+
+export const auth = getAuth(app);
+export const db = getFirestore(app);
+export const storage = getStorage(app);
 
 export const getFirebaseConfigStatus = () => ({
-  isValid: true,
+  isValid: !!firebaseConfig.apiKey,
   missingKeys: []
 });

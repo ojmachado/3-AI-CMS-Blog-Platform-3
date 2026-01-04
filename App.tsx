@@ -19,9 +19,9 @@ import { LanguageProvider } from './contexts/LanguageContext.tsx';
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, isLoading } = useAuth();
-  if (isLoading) return <div className="p-20 text-center">Verificando credenciais...</div>;
+  if (isLoading) return <div className="flex items-center justify-center h-screen"><p>Verificando acesso...</p></div>;
   if (!user) return <Navigate to="/login" replace />;
-  return <>{children}</>;
+  return <React.Fragment>{children}</React.Fragment>;
 };
 
 const App: React.FC = () => {
@@ -35,10 +35,8 @@ const App: React.FC = () => {
                 <Route path="/" element={<HomePage />} />
                 <Route path="/post/:slug" element={<PostPage />} />
                 <Route path="/login" element={<LoginPage />} />
-                {/* 
-                  Fix: Ensure ProtectedRoute correctly wraps the components as children 
-                  to satisfy the React.ReactNode requirement.
-                */}
+                
+                {/* Admin Routes wrapped in ProtectedRoute correctly with children */}
                 <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
                 <Route path="/admin/create" element={<ProtectedRoute><AdminEditor /></ProtectedRoute>} />
                 <Route path="/admin/edit/:id" element={<ProtectedRoute><AdminEditor /></ProtectedRoute>} />
@@ -49,6 +47,7 @@ const App: React.FC = () => {
                 <Route path="/admin/email" element={<ProtectedRoute><AdminEmail /></ProtectedRoute>} />
                 <Route path="/admin/funnels" element={<ProtectedRoute><AdminFunnels /></ProtectedRoute>} />
                 <Route path="/admin/landing" element={<ProtectedRoute><AdminLandingGenerator /></ProtectedRoute>} />
+                
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
             </Layout>

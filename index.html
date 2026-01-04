@@ -13,10 +13,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet" />
     
-    <!-- Babel Standalone para transpilação em tempo real -->
+    <!-- Babel Standalone -->
     <script src="https://unpkg.com/@babel/standalone@7.23.11/babel.min.js"></script>
 
-    <!-- Import Map Único e Estável -->
+    <!-- Import Map Consolidado (Versões Estáveis) -->
     <script type="importmap">
 {
   "imports": {
@@ -55,38 +55,32 @@
       .initial-loader { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background: #f8fafc; }
       .spinner { width: 40px; height: 40px; border: 4px solid #e2e8f0; border-top: 4px solid #4f46e5; border-radius: 50%; animation: spin 1s linear infinite; }
       @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-      .error-overlay { position: fixed; inset: 0; background: white; padding: 2rem; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; z-index: 9999; }
+      .error-box { display: none; padding: 2rem; background: #fef2f2; border: 1px solid #fee2e2; color: #991b1b; margin: 2rem; border-radius: 1rem; text-align: center; }
     </style>
   </head>
   <body class="bg-slate-50 text-slate-900 antialiased">
     <div id="root">
-      <div class="initial-loader" id="loader">
+      <div id="loader" class="initial-loader">
         <div class="spinner"></div>
-        <p style="margin-top: 1rem; color: #64748b; font-size: 0.875rem; font-weight: 600;">Iniciando Engine IA...</p>
+        <p style="margin-top: 1rem; color: #64748b; font-size: 0.875rem; font-weight: 600;">Carregando Inteligência Artificial...</p>
       </div>
     </div>
-
-    <div id="error-overlay" class="error-overlay">
-      <h1 style="color: #ef4444; font-weight: 900; font-size: 1.5rem;">Erro de Inicialização</h1>
-      <p id="error-message" style="color: #64748b; margin-top: 1rem;"></p>
-      <button onclick="window.location.reload()" style="margin-top: 1.5rem; background: #4f46e5; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem;">Tentar Novamente</button>
+    
+    <div id="error-display" class="error-box">
+      <h2 style="font-weight: 900; margin-bottom: 0.5rem;">Erro de Carregamento</h2>
+      <p id="error-details" style="font-size: 0.875rem; opacity: 0.8;"></p>
+      <button onclick="location.reload()" style="margin-top: 1rem; padding: 0.5rem 1rem; background: #991b1b; color: white; border-radius: 0.5rem; font-weight: bold;">Tentar Novamente</button>
     </div>
 
-    <script type="text/javascript">
-      // Captura erros de carga de módulo que causam a página em branco
-      window.onerror = function(message, source, lineno, colno, error) {
+    <script>
+      window.onerror = function(msg, url, lineNo, columnNo, error) {
         document.getElementById('loader').style.display = 'none';
-        document.getElementById('error-overlay').style.display = 'flex';
-        document.getElementById('error-message').textContent = message;
+        document.getElementById('error-display').style.display = 'block';
+        document.getElementById('error-details').innerText = msg + ' (' + url + ':' + lineNo + ')';
+        return false;
       };
     </script>
 
-    <!-- Ponto de entrada processado pelo Babel -->
-    <script 
-      type="text/babel" 
-      data-presets="react,typescript" 
-      data-type="module" 
-      src="/index.tsx"
-    ></script>
+    <script type="text/babel" data-presets="react,typescript" data-type="module" src="/index.tsx"></script>
   </body>
 </html>

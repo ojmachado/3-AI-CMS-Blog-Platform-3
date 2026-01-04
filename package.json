@@ -1,6 +1,6 @@
 
 {
-  "name": "ai-ecosystem-platform-test",
+  "name": "ai-ecosystem-platform-test-env",
   "version": "1.0.0",
   "private": true,
   "scripts": {

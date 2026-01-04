@@ -1,10 +1,11 @@
 
 import { BlogPost, PostStatus, IntegrationSettings, ThemeSettings } from '../types';
 
+// Prefixos específicos para isolar o banco de dados de teste
 const STORAGE_KEYS = {
-    POSTS: 'cms_posts_test',
-    CONFIG: 'cms_config_test',
-    THEME: 'cms_theme_test'
+    POSTS: 'cms_posts_test_v1',
+    CONFIG: 'cms_config_test_v1',
+    THEME: 'cms_theme_test_v1'
 };
 
 const getStorageData = <T>(key: string, fallback: T): T => {
@@ -82,7 +83,7 @@ export const dbService = {
       primaryColor: '#6366f1',
       secondaryColor: '#1e3a8a',
       logoUrl: '',
-      siteName: 'AI CMS (MODO TESTE)'
+      siteName: 'AI CMS TEST MODE'
     });
   },
 

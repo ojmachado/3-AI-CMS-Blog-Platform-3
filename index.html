@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css">
     <link href="https://cdn.jsdelivr.net/npm/reactflow@11.10.1/dist/style.min.css" rel="stylesheet">
     
-    <!-- Babel para transformar TSX no navegador (Modo de Teste) -->
+    <!-- Babel para transformar TSX no navegador (Essencial para modo de teste sem build) -->
     <script src="https://unpkg.com/@babel/standalone@7.23.11/babel.min.js"></script>
 
     <script type="importmap">
@@ -32,6 +32,10 @@
     "react-email-editor": "https://esm.sh/react-email-editor@1.7.11?deps=react@18.2.0,react-dom@18.2.0",
     "easymde": "https://esm.sh/easymde@2.18.0",
     "crypto-js": "https://esm.sh/crypto-js@4.2.0",
+    "firebase/app": "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js",
+    "firebase/auth": "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js",
+    "firebase/firestore": "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js",
+    "firebase/storage": "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js",
     "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
     "react/": "https://esm.sh/react@^19.2.3/",
     "firebase/": "https://esm.sh/firebase@^12.7.0/",
@@ -51,7 +55,7 @@
   </head>
   <body class="bg-slate-50 text-slate-900 antialiased">
     <div id="root"></div>
-    <!-- data-presets é vital para o Babel processar os arquivos corretamente -->
-    <script type="text/babel" data-presets="react,typescript" src="/index.tsx"></script>
+    <!-- Alterado para type="text/babel" para que o Babel intercepte e resolva o erro de MIME type -->
+    <script type="text/babel" data-presets="react,typescript" data-type="module" src="/index.tsx"></script>
   </body>
 </html>

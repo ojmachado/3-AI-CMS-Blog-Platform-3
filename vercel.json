@@ -5,7 +5,7 @@
   "trailingSlash": false,
   "headers": [
     {
-      "source": "/(.*).(tsx|ts)",
+      "source": "/(.*).(tsx|ts|js)",
       "headers": [
         {
           "key": "Content-Type",

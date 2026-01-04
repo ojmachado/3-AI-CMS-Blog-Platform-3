@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 export enum PostStatus {
@@ -147,6 +146,8 @@ export interface FunnelNode {
     waTemplateId?: string;
     waTemplateTitle?: string;
     customTitle?: string; 
+    label?: string;
+    onEdit?: () => void;
   };
   nextNodeId?: string | null; 
   trueNodeId?: string | null;

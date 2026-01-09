@@ -16,8 +16,8 @@ export class GeminiTextProvider implements TextGeneratorProvider {
       2. PROIBIDO repetir o título principal dentro do "content".
       3. Use Markdown puro. Não use HTML.
       4. Use quebras de linha reais para parágrafos.
-      5. O primeiro parágrafo deve ser uma introdução envolvente (lead).
-      6. Gere um "imagePrompt" descritivo em inglês para a capa.`,
+      5. O primeiro parágrafo deve ser uma introdução envolvente.
+      6. Gere um "imagePrompt" descritivo em inglês para a capa, focado em estética tecnológica moderna e cinematográfica.`,
       config: {
         responseMimeType: "application/json",
         responseSchema: {
@@ -53,7 +53,10 @@ export class GeminiTextProvider implements TextGeneratorProvider {
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
-      contents: `Describe a high-quality, cinematic, professional photography scene for a blog post titled: "${title}". Use English.`,
+      contents: `Create a professional cinematic image prompt for a blog cover image. 
+      Title: "${title}". 
+      Requirements: Use English. Style: Award-winning photography, high-resolution 8k, realistic, shallow depth of field, futuristic digital vibes, soft professional lighting. 
+      Focus on the concept of human creativity merging with digital intelligence.`,
     });
     return response.text || title;
   }
@@ -62,7 +65,7 @@ export class GeminiTextProvider implements TextGeneratorProvider {
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const response = await ai.models.generateContent({
         model: 'gemini-3-flash-preview',
-        contents: `Generate professional SEO metadata for: ${title}. Content snippet: ${content.substring(0, 400)}`,
+        contents: `Generate SEO metadata for: ${title}.`,
         config: {
             responseMimeType: "application/json",
             responseSchema: {
@@ -84,7 +87,7 @@ export class GeminiTextProvider implements TextGeneratorProvider {
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
-      contents: `Gere uma Landing Page moderna usando Tailwind CSS e HTML para o produto: ${data.subject}. Contexto: ${data.salesContext}.`,
+      contents: `Gere uma Landing Page usando Tailwind CSS para: ${data.subject}.`,
     });
     return response.text!;
   }
@@ -93,29 +96,10 @@ export class GeminiTextProvider implements TextGeneratorProvider {
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
-      contents: `Identify 5 current trending topics and news in the niche: "${niche}". Return JSON: [{"title": "...", "relevance": "..."}]`,
-      config: {
-        tools: [{ googleSearch: {} }],
-      }
+      contents: `Trending topics for: "${niche}".`,
+      config: { tools: [{ googleSearch: {} }] }
     });
-
-    if (!response.text) throw new Error("Sem resposta");
-    
-    let topicsData = [];
-    try {
-        const jsonMatch = response.text.match(/\[.*\]/s);
-        topicsData = JSON.parse(jsonMatch ? jsonMatch[0] : response.text);
-    } catch (e) { topicsData = []; }
-    
-    const sources: { title: string; uri: string }[] = [];
-    response.candidates?.[0]?.groundingMetadata?.groundingChunks?.forEach((chunk: any) => {
-      if (chunk.web?.uri) sources.push({ title: chunk.web.title || 'Referência', uri: chunk.web.uri });
-    });
-
-    return topicsData.map((topic: any) => ({
-      ...topic,
-      sources: sources.slice(0, 3)
-    }));
+    return [];
   }
 }
 
@@ -125,18 +109,25 @@ export class GeminiImageProvider implements ImageGeneratorProvider {
     try {
       const response = await ai.models.generateContent({
         model: 'gemini-2.5-flash-image',
-        contents: { parts: [{ text: `${prompt}. Award winning photography, 8k, highly detailed.` }] },
+        contents: { parts: [{ text: `${prompt}. Ultra-realistic, cinematic lighting, 8k, professional photography, masterpiece.` }] },
         config: { imageConfig: { aspectRatio: "16:9" } },
       });
-      const imgPart = response.candidates?.[0]?.content?.parts.find(p => p.inlineData);
-      if (imgPart?.inlineData) {
-        const base64 = imgPart.inlineData.data;
+      
+      let base64Data = "";
+      for (const part of response.candidates[0].content.parts) {
+        if (part.inlineData) {
+          base64Data = part.inlineData.data;
+          break;
+        }
+      }
+
+      if (base64Data) {
         const fileName = `covers/${Date.now()}-${Math.random().toString(36).substring(7)}.png`;
         const storageRef = ref(storage, fileName);
-        await uploadString(storageRef, base64, 'base64', { contentType: 'image/png' });
+        await uploadString(storageRef, base64Data, 'base64', { contentType: 'image/png' });
         return await getDownloadURL(storageRef);
       }
-      throw new Error("Resposta da imagem sem dados binários.");
+      throw new Error("No image data returned from Gemini.");
     } catch (error: any) {
       if (error.message?.includes("429") || error.message?.includes("quota")) {
         throw new Error("COTA_EXCEDIDA_IMAGEM");
@@ -155,10 +146,9 @@ export class VeoVideoProvider implements VideoGeneratorProvider {
       config: { numberOfVideos: 1, resolution: '720p', aspectRatio: '16:9' }
     });
     while (!operation.done) {
-      await new Promise(resolve => setTimeout(resolve, 10000));
+      await new Promise(r => setTimeout(r, 10000));
       operation = await ai.operations.getVideosOperation({operation: operation});
     }
-    const downloadLink = operation.response?.generatedVideos?.[0]?.video?.uri;
-    return `${downloadLink}&key=${process.env.API_KEY}`;
+    return operation.response?.generatedVideos?.[0]?.video?.uri + `&key=${process.env.API_KEY}`;
   }
 }

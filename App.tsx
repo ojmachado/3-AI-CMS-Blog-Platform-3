@@ -17,7 +17,8 @@ import { ThemeProvider } from './contexts/ThemeContext.tsx';
 import { AuthProvider, useAuth } from './contexts/AuthContext.tsx';
 import { LanguageProvider } from './contexts/LanguageContext.tsx';
 
-const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+// Fix: Marking children as optional to resolve TypeScript error "Property 'children' is missing in type '{}'"
+const ProtectedRoute = ({ children }: { children?: React.ReactNode }) => {
   const { user, isLoading } = useAuth();
   if (isLoading) return <div className="flex items-center justify-center h-screen"><p>Verificando acesso...</p></div>;
   if (!user) return <Navigate to="/login" replace />;
@@ -36,8 +37,7 @@ const App: React.FC = () => {
                 <Route path="/post/:slug" element={<PostPage />} />
                 <Route path="/login" element={<LoginPage />} />
                 
-                {/* Admin Routes wrapped in ProtectedRoute correctly with children */}
-                {/* Fixed: Pass elements as children to ProtectedRoute to resolve type errors */}
+                {/* Admin Routes wrapped as children to avoid Error #31 */}
                 <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
                 <Route path="/admin/create" element={<ProtectedRoute><AdminEditor /></ProtectedRoute>} />
                 <Route path="/admin/edit/:id" element={<ProtectedRoute><AdminEditor /></ProtectedRoute>} />

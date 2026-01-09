@@ -90,8 +90,6 @@ export const AdminEditor: React.FC = () => {
     setQuotaError(false);
     try {
       const result = await aiService.generateFullPost(topic);
-      
-      // Limpeza preventiva no editor
       const cleanedContent = result.content
         .replace(/\\n/g, '\n')
         .replace(new RegExp(`^#*\\s*${result.title}`, 'i'), '')
@@ -106,14 +104,12 @@ export const AdminEditor: React.FC = () => {
         seo: result.seo || { metaTitle: '', metaDescription: '', focusKeywords: [], slug: '' }
       });
     } catch (err: any) { 
-        // Fix: Reset key selection if the request fails with "Requested entity was not found." as per GenAI rules.
         if (err.message?.includes("Requested entity was not found.")) {
             setHasApiKey(false);
             setError("Erro de chave API. Por favor, selecione uma chave válida.");
-            if (window.aistudio) window.aistudio.openSelectKey().then(() => setHasApiKey(true));
-        } else if (err.message?.includes("429") || err.message?.includes("RESOURCE_EXHAUSTED") || err.message?.includes("LIMITE_EXCEDIDO")) {
+            if (window.aistudio) window.aistudio.openSelectKey();
+        } else if (err.message?.includes("429") || err.message?.includes("quota") || err.message?.includes("LIMITE")) {
             setQuotaError(true);
-            setError("Limite de cota atingido. Aguarde 60 segundos ou use uma chave paga.");
         } else {
             setError("Erro na geração de conteúdo."); 
         }
@@ -128,11 +124,9 @@ export const AdminEditor: React.FC = () => {
       const url = await aiService.generateSmartImage(generatedData.title);
       setGeneratedData(prev => prev ? { ...prev, coverImage: url } : null);
     } catch (err: any) {
-      // Fix: Handle key invalidation error for image generation.
       if (err.message?.includes("Requested entity was not found.")) {
           setHasApiKey(false);
-          setError("Erro de chave API. Selecione uma chave válida para continuar.");
-          if (window.aistudio) window.aistudio.openSelectKey().then(() => setHasApiKey(true));
+          if (window.aistudio) window.aistudio.openSelectKey();
       } else {
           setError("Falha ao gerar imagem.");
       }
@@ -146,11 +140,9 @@ export const AdminEditor: React.FC = () => {
           const results = await aiService.getTrendingTopics(topic || "Tecnologia e IA");
           setTrends(results);
       } catch (err: any) {
-          // Fix: Handle key invalidation error for search grounding.
           if (err.message?.includes("Requested entity was not found.")) {
               setHasApiKey(false);
-              setError("Erro de chave API ao pesquisar tendências.");
-              if (window.aistudio) window.aistudio.openSelectKey().then(() => setHasApiKey(true));
+              if (window.aistudio) window.aistudio.openSelectKey();
           } else {
               setError("Falha ao pesquisar tendências.");
           }
@@ -219,9 +211,8 @@ export const AdminEditor: React.FC = () => {
 
   return (
     <div className="max-w-7xl mx-auto space-y-8 pb-20 px-4">
-      {/* Banner de Cota */}
       {quotaError && (
-        <div className="bg-indigo-950 text-white p-6 rounded-[2rem] shadow-2xl border border-indigo-500/30 flex flex-col md:flex-row items-center justify-between gap-6 animate-in zoom-in-95 duration-300">
+        <div className="bg-indigo-950 text-white p-6 rounded-[2.5rem] shadow-2xl border border-indigo-500/30 flex flex-col md:flex-row items-center justify-between gap-6 animate-in zoom-in-95 duration-300">
             <div className="flex items-center gap-5">
                 <div className="p-4 bg-indigo-500/20 rounded-2xl">
                     <Clock size={32} className="text-indigo-400 animate-pulse" />
@@ -235,7 +226,6 @@ export const AdminEditor: React.FC = () => {
         </div>
       )}
 
-      {/* Header Bar */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-[2rem] border border-slate-200 shadow-sm">
         <div className="flex items-center gap-4">
             <button onClick={() => navigate('/admin')} className="p-2 hover:bg-slate-100 rounded-full text-slate-400">
@@ -319,22 +309,15 @@ export const AdminEditor: React.FC = () => {
                                     <div className="inline-flex items-center px-3 py-1 bg-indigo-50 text-indigo-600 text-[10px] font-black uppercase tracking-widest rounded-full">{trend.relevance}</div>
                                     <h4 className="text-lg font-black text-slate-900 leading-tight">{trend.title}</h4>
                                     
-                                    {/* Fix: Display extracted sources from Google Search grounding as per guidelines. */}
                                     {trend.sources && trend.sources.length > 0 && (
                                         <div className="mt-4 pt-4 border-t border-slate-100">
                                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-1">
-                                                <ExternalLink size={10} /> Fontes de Grounding:
+                                                <ExternalLink size={10} /> Fontes:
                                             </p>
                                             <ul className="space-y-1">
                                                 {trend.sources.map((source, sIdx) => (
                                                     <li key={sIdx}>
-                                                        <a 
-                                                            href={source.uri} 
-                                                            target="_blank" 
-                                                            rel="noopener noreferrer" 
-                                                            className="text-[10px] text-indigo-600 hover:underline truncate block"
-                                                            title={source.title}
-                                                        >
+                                                        <a href={source.uri} target="_blank" rel="noopener noreferrer" className="text-[10px] text-indigo-600 hover:underline truncate block">
                                                             {source.title || source.uri}
                                                         </a>
                                                     </li>
@@ -375,11 +358,9 @@ export const AdminEditor: React.FC = () => {
                                 <p className="text-sm text-slate-500">Otimização orgânica ultra veloz.</p>
                             </div>
                         </div>
-                        <div className="flex items-center gap-3">
-                            <button onClick={handleMagicSeo} disabled={isGeneratingSeo} className="flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-xl font-black hover:bg-indigo-700 shadow-xl shadow-indigo-100 disabled:opacity-50">
-                                {isGeneratingSeo ? <Loader2 className="animate-spin" size={20} /> : <Sparkles size={20} />} Otimizar
-                            </button>
-                        </div>
+                        <button onClick={handleMagicSeo} disabled={isGeneratingSeo} className="flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-xl font-black hover:bg-indigo-700 shadow-xl shadow-indigo-100 disabled:opacity-50">
+                            {isGeneratingSeo ? <Loader2 className="animate-spin" size={20} /> : <Sparkles size={20} />} Otimizar
+                        </button>
                       </div>
 
                       {showSeoDetails && (
@@ -388,7 +369,7 @@ export const AdminEditor: React.FC = () => {
                                 <div className="space-y-8">
                                     <div className="space-y-3">
                                         <div className="flex justify-between items-center">
-                                            <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest flex items-center gap-2"><Settings2 size={12} /> SEO Meta Title</label>
+                                            <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest flex items-center gap-2"><Settings2 size={12} /> Meta Title</label>
                                             <div className={`px-2 py-0.5 rounded-full text-[10px] font-black border ${getQualityColor(generatedData.seo?.metaTitle?.length || 0, 40, 60)}`}>
                                                 {generatedData.seo?.metaTitle?.length || 0}/60
                                             </div>
@@ -426,9 +407,12 @@ export const AdminEditor: React.FC = () => {
                       <h3 className="font-bold text-slate-900 flex items-center gap-2"><ImageIcon size={18} className="text-indigo-600" /> Capa Destacada</h3>
                       <div className="aspect-[16/10] bg-slate-50 rounded-[1.5rem] overflow-hidden border border-slate-100 relative group shadow-inner">
                           {isGeneratingImage && (
-                              <div className="absolute inset-0 z-20 bg-slate-900/40 backdrop-blur-sm flex flex-col items-center justify-center text-white p-4 text-center">
-                                  <Loader2 className="animate-spin mb-2" size={32} />
-                                  <span className="text-[10px] font-black uppercase tracking-widest">IA gerando sua capa...</span>
+                              <div className="absolute inset-0 z-20 bg-slate-900/60 backdrop-blur-md flex flex-col items-center justify-center text-white p-4 text-center">
+                                  <Loader2 className="animate-spin mb-4" size={32} />
+                                  <div className="space-y-1">
+                                      <p className="text-xs font-black uppercase tracking-widest">IA Criando Imagem...</p>
+                                      <p className="text-[10px] opacity-60">Isso pode levar alguns segundos</p>
+                                  </div>
                               </div>
                           )}
                           {generatedData.coverImage ? (
@@ -446,6 +430,9 @@ export const AdminEditor: React.FC = () => {
                               </button>
                           </div>
                       </div>
+                      <p className="text-[10px] text-slate-400 leading-relaxed">
+                          A IA analisa o título para gerar um prompt visual cinematográfico antes de criar a arte final.
+                      </p>
                   </div>
               </div>
           </div>

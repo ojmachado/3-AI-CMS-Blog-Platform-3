@@ -37,6 +37,7 @@ const App: React.FC = () => {
                 <Route path="/login" element={<LoginPage />} />
                 
                 {/* Admin Routes wrapped in ProtectedRoute correctly with children */}
+                {/* Fixed: Pass elements as children to ProtectedRoute to resolve type errors */}
                 <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
                 <Route path="/admin/create" element={<ProtectedRoute><AdminEditor /></ProtectedRoute>} />
                 <Route path="/admin/edit/:id" element={<ProtectedRoute><AdminEditor /></ProtectedRoute>} />

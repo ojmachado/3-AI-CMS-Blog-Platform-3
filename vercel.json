@@ -8,13 +8,17 @@
         {
           "key": "Content-Type",
           "value": "application/javascript; charset=utf-8"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
         }
       ]
     }
   ],
   "rewrites": [
     {
-      "source": "/((?!.*\\.(?:ts|tsx|js|jsx|css|png|jpg|svg|json)$).*)",
+      "source": "/((?!.*\\.(?:ts|tsx|js|jsx|css|png|jpg|svg|json|ico)$).*)",
       "destination": "/index.html"
     }
   ]

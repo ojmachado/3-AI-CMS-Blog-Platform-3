@@ -1,4 +1,3 @@
-
 import { GoogleGenAI, Type } from "@google/genai";
 import { TextGeneratorProvider, ImageGeneratorProvider, VideoGeneratorProvider, TrendingTopic } from "./interfaces";
 import { AIResponse, SeoConfig, LandingPage } from "../../types";
@@ -159,6 +158,7 @@ export class VeoVideoProvider implements VideoGeneratorProvider {
       await new Promise(resolve => setTimeout(resolve, 10000));
       operation = await ai.operations.getVideosOperation({operation: operation});
     }
-    return `${operation.response?.generatedVideos?.[0]?.video?.uri}&key=${process.env.API_KEY}`;
+    const downloadLink = operation.response?.generatedVideos?.[0]?.video?.uri;
+    return `${downloadLink}&key=${process.env.API_KEY}`;
   }
 }

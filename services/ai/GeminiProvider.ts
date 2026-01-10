@@ -9,15 +9,12 @@ export class GeminiTextProvider implements TextGeneratorProvider {
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
-      contents: `Você é um Especialista em Redação Web de alto nível. Escreva um post de blog profundo sobre: "${topic}".
+      contents: `Você é um Especialista em Redação Web de elite. Escreva um post profundo sobre: "${topic}".
       
-      **REGRAS CRÍTICAS DE FORMATO:**
-      1. O campo "content" deve conter APENAS o corpo do artigo. 
-      2. PROIBIDO repetir o título principal dentro do "content".
-      3. Use Markdown puro. Não use HTML.
-      4. Use quebras de linha reais para parágrafos.
-      5. O primeiro parágrafo deve ser uma introdução envolvente.
-      6. Gere um "imagePrompt" descritivo em inglês para a capa, focado em estética tecnológica moderna e cinematográfica.`,
+      **REGRAS DE FORMATO:**
+      1. Campo "content" com Markdown puro (sem <html>).
+      2. Gere um "imagePrompt" em INGLÊS para uma capa cinematográfica.
+      3. O SEO metaTitle deve ser impactante.`,
       config: {
         responseMimeType: "application/json",
         responseSchema: {
@@ -53,10 +50,14 @@ export class GeminiTextProvider implements TextGeneratorProvider {
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
-      contents: `Create a professional cinematic image prompt for a blog cover image. 
-      Title: "${title}". 
-      Requirements: Use English. Style: Award-winning photography, high-resolution 8k, realistic, shallow depth of field, futuristic digital vibes, soft professional lighting. 
-      Focus on the concept of human creativity merging with digital intelligence.`,
+      contents: `Create a highly detailed, cinematic image prompt for a blog post titled: "${title}".
+      
+      **Visual Style Requirements:**
+      - **Concept:** A seamless fusion of Human Creativity (e.g., paint splashes, handwriting, neurons) and Artificial Intelligence (e.g., glowing fiber optics, digital circuits, holograms).
+      - **Atmosphere:** Inspiring, futuristic, high-tech but organic.
+      - **Lighting:** Cinematic studio lighting, volumetric rays, soft teal and orange contrast.
+      - **Technical:** 8k resolution, photorealistic, shallow depth of field (bokeh), award-winning photography.
+      - **Output Language:** English only.`,
     });
     return response.text || title;
   }
@@ -65,7 +66,7 @@ export class GeminiTextProvider implements TextGeneratorProvider {
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const response = await ai.models.generateContent({
         model: 'gemini-3-flash-preview',
-        contents: `Generate SEO metadata for: ${title}.`,
+        contents: `Gere SEO metadata para: ${title}.`,
         config: {
             responseMimeType: "application/json",
             responseSchema: {
@@ -96,7 +97,7 @@ export class GeminiTextProvider implements TextGeneratorProvider {
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
-      contents: `Trending topics for: "${niche}".`,
+      contents: `Tendências em: "${niche}".`,
       config: { tools: [{ googleSearch: {} }] }
     });
     return [];
@@ -109,7 +110,7 @@ export class GeminiImageProvider implements ImageGeneratorProvider {
     try {
       const response = await ai.models.generateContent({
         model: 'gemini-2.5-flash-image',
-        contents: { parts: [{ text: `${prompt}. Ultra-realistic, cinematic lighting, 8k, professional photography, masterpiece.` }] },
+        contents: { parts: [{ text: prompt }] },
         config: { imageConfig: { aspectRatio: "16:9" } },
       });
       
@@ -127,7 +128,7 @@ export class GeminiImageProvider implements ImageGeneratorProvider {
         await uploadString(storageRef, base64Data, 'base64', { contentType: 'image/png' });
         return await getDownloadURL(storageRef);
       }
-      throw new Error("No image data returned from Gemini.");
+      throw new Error("Dados de imagem não encontrados.");
     } catch (error: any) {
       if (error.message?.includes("429") || error.message?.includes("quota")) {
         throw new Error("COTA_EXCEDIDA_IMAGEM");

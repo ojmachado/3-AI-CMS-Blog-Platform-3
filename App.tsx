@@ -25,6 +25,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const { user, isLoading } = useAuth();
   if (isLoading) return <div className="flex items-center justify-center h-screen"><div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div></div>;
   if (!user) return <Navigate to="/login" replace />;
+  // Retorna os filhos diretamente ou envolvidos em Fragment para evitar erro de objeto
   return <>{children}</>;
 };
 

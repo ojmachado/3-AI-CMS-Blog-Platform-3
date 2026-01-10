@@ -50,14 +50,12 @@ export class GeminiTextProvider implements TextGeneratorProvider {
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
-      contents: `Create a highly detailed, cinematic image prompt for a blog post titled: "${title}".
+      contents: `Create a specific image generation prompt for the blog post title: "${title}".
       
-      **Visual Style Requirements:**
-      - **Concept:** A seamless fusion of Human Creativity (e.g., paint splashes, handwriting, neurons) and Artificial Intelligence (e.g., glowing fiber optics, digital circuits, holograms).
-      - **Atmosphere:** Inspiring, futuristic, high-tech but organic.
-      - **Lighting:** Cinematic studio lighting, volumetric rays, soft teal and orange contrast.
-      - **Technical:** 8k resolution, photorealistic, shallow depth of field (bokeh), award-winning photography.
-      - **Output Language:** English only.`,
+      The prompt MUST adhere to this style:
+      "Cinematic 8k masterpiece, photorealistic, dramatic lighting. A conceptual fusion of human creativity (represented by artistic splashes, neurons, or hands writing) merging with artificial intelligence (glowing digital circuits, holographic data streams, golden nodes). High contrast, teal and orange color grading, shallow depth of field, award-winning photography style."
+      
+      Return ONLY the English prompt string.`,
     });
     return response.text || title;
   }
